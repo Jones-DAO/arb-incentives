@@ -1,17 +1,15 @@
-name: test
+name: ci
 
-on: workflow_dispatch
+on: [push]
 
 env:
   FOUNDRY_PROFILE: ci
 
 jobs:
-  check:
-    strategy:
-      fail-fast: true
-
-    name: Foundry project
-    runs-on: ubuntu-latest
+  tests:
+    environment: ALCHEMY_API_KEY
+    name: Forge Testing
+    runs-on: ubuntu-20.04
     steps:
       - uses: actions/checkout@v3
         with:

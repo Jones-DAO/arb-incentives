@@ -1,0 +1,32 @@
+node_modules
+package-lock.json
+
+# Compiler files
+cache/
+out/
+
+# Ignores development broadcast logs
+broadcast
+!/broadcast
+/broadcast/*/31337/
+/broadcast/**/dry-run/
+
+# Docs
+docs/
+
+# Dotenv file
+.env
+.env.prod
+
+# Ignore all vscode settings
+.vscode/
+
+# Ignore flattened files
+flattened.txt
+
+# Coverage
+coverage
+coverage.json
+
+.DS_Store
+.github/.DS_Store
