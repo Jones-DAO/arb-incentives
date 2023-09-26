@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.13;
 
-import {Test, Vm, StdCheats} from "forge-std/Test.sol";
+import {Test, Vm, StdCheats, StdUtils} from "forge-std/Test.sol";
 import {console2} from "forge-std/console2.sol";
 import {MiniChefV2} from "src/Sushi/MiniChefV2.sol";
 import {IRewarder} from "src/Sushi/IRewarder.sol";
@@ -54,15 +54,19 @@ contract MiniChefV2Test is Test {
         poolID[address(wjAura)] = 2;
 
         // Set Arb per second
-        uint256 _arbPerSecond;
+        uint256 _arbPerSecond = 1e18;
         farm.setSushiPerSecond(_arbPerSecond);
 
-        deal(address(ARB), gov, totalIncentives);
+        deal(address(ARB), address(farm), totalIncentives);
 
         vm.stopPrank();
     }
 
     function test_stake(uint256 _amount) public {
+        _amount = bound(_amount, 1e16, 20_000_000e18);
+
+        console2.log("_amount", _amount);
+
         _deposit(alice, _amount, address(jGLP));
 
         (uint256 amount,) = farm.userInfo(poolID[address(jGLP)], alice);
@@ -70,22 +74,48 @@ contract MiniChefV2Test is Test {
         assertEq(amount, _amount);
     }
 
+    function test_harvest(uint256 _amount) public {
+        _amount = bound(_amount, 1e16, 20_000_000e18);
+
+        console2.log("_amount", _amount);
+
+        address jGLPAddress = address(jGLP);
+
+        uint256 _poolID = poolID[jGLPAddress];
+
+        _deposit(alice, _amount, jGLPAddress);
+
+        (uint256 amount,) = farm.userInfo(_poolID, alice);
+
+        assertEq(amount, _amount);
+
+        // 1 week later
+        vm.warp(block.timestamp + 1 weeks + 1);
+
+        uint256 pendingArb = farm.pendingSushi(_poolID, alice);
+
+        assertGt(pendingArb, 0);
+
+        uint256 arbBefore = ARB.balanceOf(alice);
+
+        vm.startPrank(alice, alice);
+
+        farm.harvest(_poolID, alice);
+
+        vm.stopPrank();
+
+        uint256 arbAfter = ARB.balanceOf(alice);
+
+        assertGt(arbAfter, arbBefore);
+        assertEq(arbAfter, pendingArb);
+    }
+
     function _deposit(address _user, uint256 _amount, address _asset) private {
         deal(_asset, _user, _amount);
 
         vm.startPrank(_user, _user);
 
-        console2.log("_asset: ", _asset);
-
-        console2.log("user balance: ", IERC20(_asset).balanceOf(_user));
-
         IERC20(_asset).approve(address(farm), _amount);
-
-        console2.log("_user: ", _user);
-
-        console2.log("farm: ", address(farm));
-
-        console2.log("allowance: ", IERC20(_asset).allowance(_user, address(farm)));
 
         farm.deposit(poolID[_asset], _amount, _user);
 

@@ -15,8 +15,6 @@ import {BoringBatchable} from "src/Sushi/BoringBatchable.sol";
 import {IMigratorChef} from "src/Sushi/IMigratorChef.sol";
 import {IRewarder} from "src/Sushi/IRewarder.sol";
 
-import {console2} from "forge-std/console2.sol";
-
 contract MiniChefV2 is BoringOwnable, BoringBatchable {
     using BoringMath for uint256;
     using BoringMath128 for uint128;
@@ -141,6 +139,7 @@ contract MiniChefV2 is BoringOwnable, BoringBatchable {
         UserInfo storage user = userInfo[_pid][_user];
         uint256 accSushiPerShare = pool.accSushiPerShare;
         uint256 lpSupply = lpToken[_pid].balanceOf(address(this));
+
         if (block.timestamp > pool.lastRewardTime && lpSupply != 0) {
             uint256 time = block.timestamp.sub(pool.lastRewardTime);
             uint256 sushiReward = time.mul(sushiPerSecond).mul(pool.allocPoint) / totalAllocPoint;
@@ -194,9 +193,6 @@ contract MiniChefV2 is BoringOwnable, BoringBatchable {
         if (address(_rewarder) != address(0)) {
             _rewarder.onSushiReward(pid, to, to, 0, user.amount);
         }
-
-        console2.log("msg.sender", msg.sender);
-        console2.log("address(this)", address(this));
 
         lpToken[pid].safeTransferFrom(msg.sender, address(this), amount);
 

@@ -3,7 +3,6 @@
 pragma solidity 0.8.20;
 
 import {IERC20} from "src/Sushi/IERC20.sol";
-import {console2} from "forge-std/console2.sol";
 
 library BoringERC20 {
     function safeSymbol(IERC20 token) internal view returns (string memory) {
@@ -28,8 +27,6 @@ library BoringERC20 {
 
     function safeTransferFrom(IERC20 token, address from, address to, uint256 amount) internal {
         (bool success, bytes memory data) = address(token).call(abi.encodeWithSelector(0x23b872dd, from, to, amount));
-        console2.log("success: ", success);
-
         require(success && (data.length == 0 || abi.decode(data, (bool))), "BoringERC20: TransferFrom failed");
     }
 }
