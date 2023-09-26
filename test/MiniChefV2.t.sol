@@ -5,7 +5,6 @@ import {Test, Vm, StdCheats} from "forge-std/Test.sol";
 import {console2} from "forge-std/console2.sol";
 import {MiniChefV2} from "src/Sushi/MiniChefV2.sol";
 import {IRewarder} from "src/Sushi/IRewarder.sol";
-
 import {IERC20} from "src/Sushi/IERC20.sol";
 
 contract MiniChefV2Test is Test {
@@ -24,10 +23,10 @@ contract MiniChefV2Test is Test {
     mapping(address => uint256) public poolID;
 
     function setUp() public {
-        vm.createSelectFork(vm.rpcUrl("arbitrum"));
+        vm.createSelectFork(vm.rpcUrl("arbitrum"), 134806168);
 
         vm.startPrank(gov, gov);
-        
+
         farm = new MiniChefV2(ARB);
         uint256 allocPoint; // The amount of allocation points assigned to the pool. Also known as the amount of ARB to distribute per block.
 
@@ -73,10 +72,18 @@ contract MiniChefV2Test is Test {
 
     function _deposit(address _user, uint256 _amount, address _asset) private {
         deal(_asset, _user, _amount);
-        
+
         vm.startPrank(_user, _user);
 
+        console2.log("_asset: ", _asset);
+
+        console2.log("user balance: ", IERC20(_asset).balanceOf(_user));
+
         IERC20(_asset).approve(address(farm), _amount);
+
+        console2.log("_user: ", _user);
+
+        console2.log("farm: ", address(farm));
 
         console2.log("allowance: ", IERC20(_asset).allowance(_user, address(farm)));
 

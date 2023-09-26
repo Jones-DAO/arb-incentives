@@ -28,9 +28,8 @@ library BoringERC20 {
 
     function safeTransferFrom(IERC20 token, address from, address to, uint256 amount) internal {
         (bool success, bytes memory data) = address(token).call(abi.encodeWithSelector(0x23b872dd, from, to, amount));
-        console2.log("success:", success);
-        console2.log("data length:", data.length);
-        
+        console2.log("success: ", success);
+
         require(success && (data.length == 0 || abi.decode(data, (bool))), "BoringERC20: TransferFrom failed");
     }
 }

@@ -12,8 +12,10 @@ import {BoringMath, BoringMath128} from "src/Sushi/BoringMath.sol";
 import {BoringERC20} from "src/Sushi/BoringERC20.sol";
 import {BoringOwnable} from "src/Sushi/BoringOwnable.sol";
 import {BoringBatchable} from "src/Sushi/BoringBatchable.sol";
-import {IRewarder} from "src/Sushi/IRewarder.sol";
 import {IMigratorChef} from "src/Sushi/IMigratorChef.sol";
+import {IRewarder} from "src/Sushi/IRewarder.sol";
+
+import {console2} from "forge-std/console2.sol";
 
 contract MiniChefV2 is BoringOwnable, BoringBatchable {
     using BoringMath for uint256;
@@ -192,6 +194,9 @@ contract MiniChefV2 is BoringOwnable, BoringBatchable {
         if (address(_rewarder) != address(0)) {
             _rewarder.onSushiReward(pid, to, to, 0, user.amount);
         }
+
+        console2.log("msg.sender", msg.sender);
+        console2.log("address(this)", address(this));
 
         lpToken[pid].safeTransferFrom(msg.sender, address(this), amount);
 
