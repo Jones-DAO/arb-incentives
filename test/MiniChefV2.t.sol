@@ -63,6 +63,8 @@ contract MiniChefV2Test is Test {
     }
 
     function test_stake(uint256 _amount) public {
+        vm.assume(_amount > 0 && _amount < 1_000_000e18);
+
         _deposit(alice, _amount, address(jGLP));
 
         (uint256 amount,) = farm.userInfo(poolID[address(jGLP)], alice);

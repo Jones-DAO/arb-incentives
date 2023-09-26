@@ -182,6 +182,8 @@ contract MiniChefV2 is BoringOwnable, BoringBatchable {
     /// @param amount LP token amount to deposit.
     /// @param to The receiver of `amount` deposit benefit.
     function deposit(uint256 pid, uint256 amount, address to) public {
+        require(amount > 0, "Can not stake 0");
+        
         PoolInfo memory pool = updatePool(pid);
         UserInfo storage user = userInfo[pid][to];
 
