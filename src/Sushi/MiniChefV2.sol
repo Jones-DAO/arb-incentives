@@ -293,4 +293,43 @@ contract MiniChefV2 is BoringOwnable, BoringBatchable {
         lpToken[pid].safeTransfer(to, amount);
         emit EmergencyWithdraw(msg.sender, pid, amount, to);
     }
+
+    /**
+     * @notice Moves assets from the strategy to `_to`
+     * @param _assets An array of IERC20 compatible tokens to move out from the strategy
+     * @param _withdrawNative `true` if we want to move the native asset from the strategy
+     */
+    function emergencyWithdraw(address _to, address[] memory _assets, bool _withdrawNative) external onlyOwner {
+        uint256 assetsLength = _assets.length;
+        for (uint256 i = 0; i < assetsLength; i++) {
+            IERC20 asset = IERC20(_assets[i]);
+            uint256 assetBalance = asset.balanceOf(address(this));
+
+            if (assetBalance > 0) {
+                // Transfer the ERC20 tokens
+                asset.safeTransfer(_to, assetBalance);
+            }
+
+            unchecked {
+                ++i;
+            }
+        }
+
+        uint256 nativeBalance = address(this).balance;
+
+        // Nothing else to do
+        if (_withdrawNative && nativeBalance > 0) {
+            // Transfer the native currency
+            (bool sent,) = payable(_to).call{value: nativeBalance}("");
+            if (!sent) {
+                revert FailSendETH();
+            }
+        }
+
+        emit EmergencyWithdrawal(msg.sender, _to, _assets, _withdrawNative ? nativeBalance : 0);
+    }
+
+    event EmergencyWithdrawal(address indexed caller, address indexed receiver, address[] tokens, uint256 nativeBalanc);
+
+    error FailSendETH();
 }
