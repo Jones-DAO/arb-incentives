@@ -58,6 +58,8 @@ contract MiniChefV2 is BoringOwnable, BoringBatchable {
     uint256 public sushiPerSecond;
     uint256 private constant ACC_SUSHI_PRECISION = 1e12;
 
+    uint256 public deadline;
+
     event Deposit(address indexed user, uint256 indexed pid, uint256 amount, address indexed to);
     event Withdraw(address indexed user, uint256 indexed pid, uint256 amount, address indexed to);
     event EmergencyWithdraw(address indexed user, uint256 indexed pid, uint256 amount, address indexed to);
@@ -70,6 +72,7 @@ contract MiniChefV2 is BoringOwnable, BoringBatchable {
     /// @param _sushi The SUSHI token contract address.
     constructor(IERC20 _sushi) {
         SUSHI = _sushi;
+        deadline = 1706745599;
     }
 
     /// @notice Returns the number of MCV2 pools.
@@ -110,6 +113,12 @@ contract MiniChefV2 is BoringOwnable, BoringBatchable {
     function setSushiPerSecond(uint256 _sushiPerSecond) public onlyOwner {
         sushiPerSecond = _sushiPerSecond;
         emit LogSushiPerSecond(_sushiPerSecond);
+    }
+
+    /// @notice Sets the rewards deadline. Can only be called by the owner.
+    /// @param _deadline The timestmap for rewards deadline.
+    function setDeadline(uint256 _deadline) public onlyOwner {
+        deadline = _deadline;
     }
 
     /// @notice Set the `migrator` contract. Can only be called by the owner.
@@ -162,6 +171,9 @@ contract MiniChefV2 is BoringOwnable, BoringBatchable {
     /// @return pool Returns the pool that was updated.
     function updatePool(uint256 pid) public returns (PoolInfo memory pool) {
         pool = poolInfo[pid];
+        if (block.timestamp >= deadline) {
+            setSushiPerSecond(0);
+        }
         if (block.timestamp > pool.lastRewardTime) {
             uint256 lpSupply = lpToken[pid].balanceOf(address(this));
             if (lpSupply > 0) {
