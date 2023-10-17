@@ -20,7 +20,7 @@ contract IncentiveDistributor is Script {
     uint256 auraAllocPoint = 2000; // Update
 
     // Set Arb per second
-    uint256 arbPerSecond;
+    uint256 arbPerSecond; // Update
 
     function run() public {
         vm.startBroadcast();
