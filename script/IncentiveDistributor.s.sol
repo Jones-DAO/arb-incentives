@@ -17,11 +17,11 @@ contract IncentiveDistributor is Script {
 
     MiniChefV2 public farm;
 
+    /// @notice GMT: Wednesday, 31 January 2024 23:59:59
     uint256 deadline = 1706745599;
-
-    uint256 totalIncentives = 1_650_000e18;
-
+    
     /// @notice 2M - 350k allocation to MV2
+    uint256 totalIncentives = 1_650_000e18;
 
     // Set Arb per second
     uint256 arbPerSecond = totalIncentives.mulDivDown(1, deadline - block.timestamp);
@@ -33,9 +33,9 @@ contract IncentiveDistributor is Script {
 
     address public incentiveReceiver; // Update
 
-    uint256 glpWithdrawIncentives = 3e12 / 100; // Update
-    uint256 usdcWithdrawIncentives = 3e12 / 100; // Update
-    uint256 auraWithdrawIncentives = 3e12 / 100; // Update
+    uint256 glpWithdrawIncentives; // Update
+    uint256 usdcWithdrawIncentives; // Update
+    uint256 auraWithdrawIncentives; // Update
 
     function run() public {
         vm.startBroadcast();

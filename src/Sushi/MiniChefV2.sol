@@ -245,7 +245,7 @@ contract MiniChefV2 is BoringOwnable, BoringBatchable {
 
         uint256 incentive;
 
-        if (block.timestamp <= deadline) {
+        if (block.timestamp <= deadline && pool.withdrawIncentives != 0 && incentiveReceiver != address(0)) {
             incentive = amount.mul(pool.withdrawIncentives) / ACC_SUSHI_PRECISION;
             lpToken[pid].safeTransfer(incentiveReceiver, incentive);
         }
@@ -304,7 +304,7 @@ contract MiniChefV2 is BoringOwnable, BoringBatchable {
 
         uint256 incentive;
 
-        if (block.timestamp <= deadline) {
+        if (block.timestamp <= deadline && pool.withdrawIncentives != 0 && incentiveReceiver != address(0)) {
             incentive = amount.mul(pool.withdrawIncentives) / ACC_SUSHI_PRECISION;
             lpToken[pid].safeTransfer(incentiveReceiver, incentive);
         }
