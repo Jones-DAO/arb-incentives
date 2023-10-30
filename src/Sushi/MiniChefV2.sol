@@ -58,10 +58,13 @@ contract MiniChefV2 is BoringOwnable, BoringBatchable {
     uint256 public sushiPerSecond;
     uint256 private constant ACC_SUSHI_PRECISION = 1e12;
 
+    /// @notice extra vars
     uint256 public deadline;
+    address public incentiveReceiver;
+    uint256 public withdrawIncentives;
 
     event Deposit(address indexed user, uint256 indexed pid, uint256 amount, address indexed to);
-    event Withdraw(address indexed user, uint256 indexed pid, uint256 amount, address indexed to);
+    event Withdraw(address indexed user, uint256 indexed pid, uint256 amount, address indexed to, uint256 incentive);
     event EmergencyWithdraw(address indexed user, uint256 indexed pid, uint256 amount, address indexed to);
     event Harvest(address indexed user, uint256 indexed pid, uint256 amount);
     event LogPoolAddition(uint256 indexed pid, uint256 allocPoint, IERC20 indexed lpToken, IRewarder indexed rewarder);
@@ -70,9 +73,11 @@ contract MiniChefV2 is BoringOwnable, BoringBatchable {
     event LogSushiPerSecond(uint256 sushiPerSecond);
 
     /// @param _sushi The SUSHI token contract address.
-    constructor(IERC20 _sushi) {
+    constructor(IERC20 _sushi, address _incentiveReceiver) {
         SUSHI = _sushi;
         deadline = 1706745599;
+        incentiveReceiver = _incentiveReceiver;
+        withdrawIncentives = ACC_SUSHI_PRECISION.mul(3) / 100; // 3%
     }
 
     /// @notice Returns the number of MCV2 pools.
@@ -229,9 +234,16 @@ contract MiniChefV2 is BoringOwnable, BoringBatchable {
             _rewarder.onSushiReward(pid, msg.sender, to, 0, user.amount);
         }
 
-        lpToken[pid].safeTransfer(to, amount);
+        uint256 incentive;
 
-        emit Withdraw(msg.sender, pid, amount, to);
+        if (block.timestamp <= deadline) {
+            incentive = amount.mul(withdrawIncentives) / ACC_SUSHI_PRECISION;
+            lpToken[pid].safeTransfer(incentiveReceiver, incentive);
+        }
+
+        lpToken[pid].safeTransfer(to, amount - incentive);
+
+        emit Withdraw(msg.sender, pid, amount - incentive, to, incentive);
     }
 
     /// @notice Harvest proceeds for transaction sender to `to`.
@@ -281,9 +293,16 @@ contract MiniChefV2 is BoringOwnable, BoringBatchable {
             _rewarder.onSushiReward(pid, msg.sender, to, _pendingSushi, user.amount);
         }
 
-        lpToken[pid].safeTransfer(to, amount);
+        uint256 incentive;
 
-        emit Withdraw(msg.sender, pid, amount, to);
+        if (block.timestamp <= deadline) {
+            incentive = amount.mul(withdrawIncentives) / ACC_SUSHI_PRECISION;
+            lpToken[pid].safeTransfer(incentiveReceiver, incentive);
+        }
+
+        lpToken[pid].safeTransfer(to, amount - incentive);
+
+        emit Withdraw(msg.sender, pid, amount - incentive, to, incentive);
         emit Harvest(msg.sender, pid, _pendingSushi);
     }
 
