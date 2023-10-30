@@ -33,19 +33,23 @@ contract IncentiveDistributor is Script {
 
     address public incentiveReceiver; // Update
 
+    uint256 glpWithdrawIncentives = 3e12 / 100; // Update
+    uint256 usdcWithdrawIncentives = 3e12 / 100; // Update
+    uint256 auraWithdrawIncentives = 3e12 / 100; // Update
+
     function run() public {
         vm.startBroadcast();
 
         farm = new MiniChefV2(ARB, incentiveReceiver);
 
         // Create pool for jGLP
-        farm.add(glpAllocPoint, jGLP, IRewarder(address(0)));
+        farm.add(glpAllocPoint, jGLP, IRewarder(address(0)), glpWithdrawIncentives);
 
         // Create pool for jUSDC
-        farm.add(usdcAllocPoint, jUSDC, IRewarder(address(0)));
+        farm.add(usdcAllocPoint, jUSDC, IRewarder(address(0)), usdcWithdrawIncentives);
 
         // Create pool for wjAura
-        farm.add(auraAllocPoint, wjAura, IRewarder(address(0)));
+        farm.add(auraAllocPoint, wjAura, IRewarder(address(0)), auraWithdrawIncentives);
 
         farm.setSushiPerSecond(arbPerSecond);
 

@@ -36,6 +36,7 @@ contract MiniChefV2 is BoringOwnable, BoringBatchable {
         uint128 accSushiPerShare;
         uint64 lastRewardTime;
         uint64 allocPoint;
+        uint256 withdrawIncentives;
     }
 
     /// @notice Address of SUSHI contract.
@@ -58,10 +59,11 @@ contract MiniChefV2 is BoringOwnable, BoringBatchable {
     uint256 public sushiPerSecond;
     uint256 private constant ACC_SUSHI_PRECISION = 1e12;
 
-    /// @notice extra vars
+    /// @notice Extra vars
     uint256 public deadline;
     address public incentiveReceiver;
-    uint256 public withdrawIncentives;
+    /// @notice poolId => Withdraw incentives
+    mapping(uint256 => uint256) withdrawIncentives;
 
     event Deposit(address indexed user, uint256 indexed pid, uint256 amount, address indexed to);
     event Withdraw(address indexed user, uint256 indexed pid, uint256 amount, address indexed to, uint256 incentive);
@@ -77,7 +79,6 @@ contract MiniChefV2 is BoringOwnable, BoringBatchable {
         SUSHI = _sushi;
         deadline = 1706745599;
         incentiveReceiver = _incentiveReceiver;
-        withdrawIncentives = ACC_SUSHI_PRECISION.mul(3) / 100; // 3%
     }
 
     /// @notice Returns the number of MCV2 pools.
@@ -90,13 +91,21 @@ contract MiniChefV2 is BoringOwnable, BoringBatchable {
     /// @param allocPoint AP of the new pool.
     /// @param _lpToken Address of the LP ERC-20 token.
     /// @param _rewarder Address of the rewarder delegate.
-    function add(uint256 allocPoint, IERC20 _lpToken, IRewarder _rewarder) public onlyOwner {
+    function add(uint256 allocPoint, IERC20 _lpToken, IRewarder _rewarder, uint256 _withdrawIncentives)
+        public
+        onlyOwner
+    {
         totalAllocPoint = totalAllocPoint.add(allocPoint);
         lpToken.push(_lpToken);
         rewarder.push(_rewarder);
 
         poolInfo.push(
-            PoolInfo({allocPoint: allocPoint.to64(), lastRewardTime: block.timestamp.to64(), accSushiPerShare: 0})
+            PoolInfo({
+                allocPoint: allocPoint.to64(),
+                lastRewardTime: block.timestamp.to64(),
+                accSushiPerShare: 0,
+                withdrawIncentives: _withdrawIncentives
+            })
         );
         emit LogPoolAddition(lpToken.length.sub(1), allocPoint, _lpToken, _rewarder);
     }
@@ -237,7 +246,7 @@ contract MiniChefV2 is BoringOwnable, BoringBatchable {
         uint256 incentive;
 
         if (block.timestamp <= deadline) {
-            incentive = amount.mul(withdrawIncentives) / ACC_SUSHI_PRECISION;
+            incentive = amount.mul(pool.withdrawIncentives) / ACC_SUSHI_PRECISION;
             lpToken[pid].safeTransfer(incentiveReceiver, incentive);
         }
 
@@ -296,7 +305,7 @@ contract MiniChefV2 is BoringOwnable, BoringBatchable {
         uint256 incentive;
 
         if (block.timestamp <= deadline) {
-            incentive = amount.mul(withdrawIncentives) / ACC_SUSHI_PRECISION;
+            incentive = amount.mul(pool.withdrawIncentives) / ACC_SUSHI_PRECISION;
             lpToken[pid].safeTransfer(incentiveReceiver, incentive);
         }
 
@@ -358,6 +367,15 @@ contract MiniChefV2 is BoringOwnable, BoringBatchable {
         }
 
         emit EmergencyWithdrawal(msg.sender, _to, _assets, _withdrawNative ? nativeBalance : 0);
+    }
+
+    /**
+     * @notice Update pool withdraw icnentives
+     * @param pid Pool id
+     * @param _withdrawIncentives amount of incentives when withdraw
+     */
+    function updatePoolIncentive(uint256 pid, uint256 _withdrawIncentives) external onlyOwner {
+        poolInfo[pid].withdrawIncentives = _withdrawIncentives;
     }
 
     event EmergencyWithdrawal(address indexed caller, address indexed receiver, address[] tokens, uint256 nativeBalanc);

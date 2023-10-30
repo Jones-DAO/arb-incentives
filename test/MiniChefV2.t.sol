@@ -48,17 +48,17 @@ contract MiniChefV2Test is Test {
 
         // Create pool for jGLP
         allocPoint = 3939;
-        farm.add(allocPoint, jGLP, IRewarder(address(0)));
+        farm.add(allocPoint, jGLP, IRewarder(address(0)), withdrawIncentives);
         poolID[address(jGLP)] = 0;
 
         // Create pool for jUSDC
         allocPoint = 3939;
-        farm.add(allocPoint, jUSDC, IRewarder(address(0)));
+        farm.add(allocPoint, jUSDC, IRewarder(address(0)), withdrawIncentives);
         poolID[address(jUSDC)] = 1;
 
         // Create pool for wjAura
         allocPoint = 2122;
-        farm.add(allocPoint, wjAura, IRewarder(address(0)));
+        farm.add(allocPoint, wjAura, IRewarder(address(0)), withdrawIncentives);
         poolID[address(wjAura)] = 2;
 
         // Set Arb per second
@@ -166,6 +166,21 @@ contract MiniChefV2Test is Test {
 
         assertEq(incentive, (_amount * withdrawIncentives) / 1e12);
         assertLt(IERC20(jGLPAddress).balanceOf(alice), _amount);
+    }
+
+    function test_update_withdraw_incentives(uint256 _amount, uint256 _pid) public {
+        _amount = bound(_amount, 3e11 / 100, 10e12 / 100);
+        _pid = bound(_pid, 0, 2);
+
+        vm.startPrank(gov, gov);
+
+        farm.updatePoolIncentive(_pid, _amount);
+
+        vm.stopPrank();
+
+        (,,, uint256 _withdrawIncentives) = farm.poolInfo(_pid);
+
+        assertEq(_withdrawIncentives, _amount);
     }
 
     function _deposit(address _user, uint256 _amount, address _asset) private {
