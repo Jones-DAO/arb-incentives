@@ -19,7 +19,7 @@ contract IncentiveDistributor is Script {
 
     /// @notice GMT: Wednesday, 31 January 2024 23:59:59
     uint256 deadline = 1706745599;
-    
+
     /// @notice 2M - 350k allocation to MV2
     uint256 totalIncentives = 1_650_000e18;
 
