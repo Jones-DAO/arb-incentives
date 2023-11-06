@@ -17,6 +17,8 @@ contract IncentiveDistributor is Script {
 
     MiniChefV2 public farm;
 
+    uint256 constant ACC_SUSHI_PRECISION = 1e12;
+
     /// @notice GMT: Wednesday, 31 January 2024 23:59:59
     uint256 deadline = 1706745599;
 
@@ -33,8 +35,8 @@ contract IncentiveDistributor is Script {
 
     address public incentiveReceiver; // Update
 
-    uint256 glpWithdrawIncentives; // Update
-    uint256 usdcWithdrawIncentives; // Update
+    uint256 glpWithdrawIncentives = ACC_SUSHI_PRECISION.mulDivDown(2, 100); // 2%
+    uint256 usdcWithdrawIncentives = ACC_SUSHI_PRECISION / 100; // 1%
     uint256 auraWithdrawIncentives; // Update
 
     function run() public {
