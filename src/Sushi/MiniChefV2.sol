@@ -129,25 +129,25 @@ contract MiniChefV2 is Operable, BoringBatchable {
 
     /// @notice Sets the sushi per second to be distributed. Can only be called by the owner.
     /// @param _sushiPerSecond The amount of Sushi to be distributed per second.
-    function setSushiPerSecond(uint256 _sushiPerSecond) public onlyGovernorOrOperator {
+    function setSushiPerSecond(uint256 _sushiPerSecond) public onlyGovernor {
         sushiPerSecond = _sushiPerSecond;
         emit LogSushiPerSecond(_sushiPerSecond);
     }
 
     /// @notice Toggle incentives, if is it true it mean incentives are ON
-    function toggleIncentives() public onlyGovernorOrOperator {
+    function toggleIncentives() public onlyGovernor {
         incentivesOn = !incentivesOn;
     }
 
     /// @notice Sets the rewards deadline. Can only be called by the owner.
     /// @param _deadline The timestmap for rewards deadline.
-    function setDeadline(uint256 _deadline) public onlyGovernorOrOperator {
+    function setDeadline(uint256 _deadline) public onlyGovernor {
         deadline = _deadline;
     }
 
     /// @notice Set the `migrator` contract. Can only be called by the owner.
     /// @param _migrator The contract address to set.
-    function setMigrator(IMigratorChef _migrator) public onlyOperator {
+    function setMigrator(IMigratorChef _migrator) public onlyGovernor {
         migrator = _migrator;
     }
 
@@ -384,7 +384,7 @@ contract MiniChefV2 is Operable, BoringBatchable {
      * @param pid Pool id
      * @param _withdrawIncentives amount of incentives when withdraw
      */
-    function updatePoolIncentive(uint256 pid, uint256 _withdrawIncentives) external onlyGovernorOrOperator {
+    function updatePoolIncentive(uint256 pid, uint256 _withdrawIncentives) external onlyGovernor {
         poolInfo[pid].withdrawIncentives = _withdrawIncentives;
     }
 
