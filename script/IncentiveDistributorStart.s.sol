@@ -8,15 +8,14 @@ import {MiniChefV2} from "src/Sushi/MiniChefV2.sol";
 import {IERC20} from "src/Sushi/IERC20.sol";
 import {IRewarder} from "src/Sushi/IRewarder.sol";
 
-contract IncentiveDistributor is Script {
+contract IncentiveDistributorStart is Script {
     using FixedPointMathLib for uint256;
 
-    IERC20 public constant ARB = IERC20(0x912CE59144191C1204E64559FE8253a0e49E6548);
     IERC20 public constant jGLP = IERC20(0x7241bC8035b65865156DDb5EdEf3eB32874a3AF6);
     IERC20 public constant jUSDC = IERC20(0xe66998533a1992ecE9eA99cDf47686F4fc8458E0);
     IERC20 public constant wjAura = IERC20(0x873066F098E6A3A4FEbF65c9e437F7F71C8ef314);
 
-    MiniChefV2 public farm;
+    MiniChefV2 public farm = MiniChefV2(0x68F81a47D9a0d453B8fdbeF11509faf3FD7120c7);
 
     uint256 constant ACC_SUSHI_PRECISION = 1e12;
 
@@ -34,18 +33,14 @@ contract IncentiveDistributor is Script {
     uint256 usdcAllocPoint = 3939; // 39,39% USDC
     uint256 auraAllocPoint = 2122; // 21.22 % jAURA
 
-    address public incentiveReceiver; // Update
+    address public farmAddress = address(0); // Update
 
     uint256 glpWithdrawIncentives = ACC_SUSHI_PRECISION.mulDivDown(2, 100); // 2%
     uint256 usdcWithdrawIncentives = ACC_SUSHI_PRECISION / 100; // 1%
-    uint256 auraWithdrawIncentives; // Update
+    uint256 auraWithdrawIncentives; // 0%
 
     function run() public {
         vm.startBroadcast();
-        console2.log("Deploying from:", msg.sender);
-
-        farm = new MiniChefV2(ARB, incentiveReceiver);
-        console2.log("Farm address:", address(farm));
 
         // Create pool for jGLP
         farm.add(glpAllocPoint, jGLP, IRewarder(address(0)), glpWithdrawIncentives);
