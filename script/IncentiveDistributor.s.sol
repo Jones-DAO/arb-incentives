@@ -2,6 +2,7 @@
 pragma solidity ^0.8.20;
 
 import "forge-std/Script.sol";
+import {console2} from "forge-std/console2.sol";
 import {FixedPointMathLib} from "solmate/utils/FixedPointMathLib.sol";
 import {MiniChefV2} from "src/Sushi/MiniChefV2.sol";
 import {IERC20} from "src/Sushi/IERC20.sol";
@@ -41,8 +42,10 @@ contract IncentiveDistributor is Script {
 
     function run() public {
         vm.startBroadcast();
+        console2.log("Deploying from:", msg.sender);
 
         farm = new MiniChefV2(ARB, incentiveReceiver);
+        console2.log("Farm address:", address(farm));
 
         // Create pool for jGLP
         farm.add(glpAllocPoint, jGLP, IRewarder(address(0)), glpWithdrawIncentives);
