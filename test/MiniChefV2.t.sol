@@ -18,7 +18,7 @@ contract MiniChefV2Test is Test {
     MiniChefV2 public farm;
 
     address public incentiveReceiver = 0x8Cf4F0BA114bfC15faBDf0DdC0A7b7eD5399Af5f;
-    uint256 public withdrawIncentives = 3e12 / 100;
+    uint256 public depositIncentives = 3e12 / 100;
 
     IERC20 public constant ARB = IERC20(0x912CE59144191C1204E64559FE8253a0e49E6548);
     IERC20 public constant jGLP = IERC20(0x7241bC8035b65865156DDb5EdEf3eB32874a3AF6);
@@ -48,17 +48,17 @@ contract MiniChefV2Test is Test {
 
         // Create pool for jGLP
         allocPoint = 3939;
-        farm.add(allocPoint, jGLP, IRewarder(address(0)), withdrawIncentives);
+        farm.add(allocPoint, jGLP, IRewarder(address(0)), depositIncentives);
         poolID[address(jGLP)] = 0;
 
         // Create pool for jUSDC
         allocPoint = 3939;
-        farm.add(allocPoint, jUSDC, IRewarder(address(0)), withdrawIncentives);
+        farm.add(allocPoint, jUSDC, IRewarder(address(0)), depositIncentives);
         poolID[address(jUSDC)] = 1;
 
         // Create pool for wjAura
         allocPoint = 2122;
-        farm.add(allocPoint, wjAura, IRewarder(address(0)), withdrawIncentives);
+        farm.add(allocPoint, wjAura, IRewarder(address(0)), depositIncentives);
         poolID[address(wjAura)] = 2;
 
         // Set Arb per second
@@ -79,7 +79,11 @@ contract MiniChefV2Test is Test {
 
         (uint256 amount,) = farm.userInfo(poolID[address(jGLP)], alice);
 
-        assertEq(amount, _amount);
+        address jGLPAddress = address(jGLP);
+
+        uint256 incentive = IERC20(jGLPAddress).balanceOf(incentiveReceiver);
+
+        assertEq(amount, _amount - incentive);
     }
 
     function test_harvest(uint256 _amount) public {
@@ -95,12 +99,18 @@ contract MiniChefV2Test is Test {
 
         (uint256 amount,) = farm.userInfo(_poolID, alice);
 
-        assertEq(amount, _amount);
+        uint256 incentive = IERC20(jGLPAddress).balanceOf(incentiveReceiver);
+
+        console2.log("incentive", incentive);
+
+        assertEq(amount, _amount - incentive);
 
         // 1 week later
         vm.warp(block.timestamp + 1 weeks + 1);
 
         uint256 pendingArb = farm.pendingSushi(_poolID, alice);
+
+        console2.log("pendingArb", pendingArb);
 
         assertGt(pendingArb, 0);
 
@@ -131,7 +141,11 @@ contract MiniChefV2Test is Test {
 
         (uint256 amount,) = farm.userInfo(_poolID, alice);
 
-        assertEq(amount, _amount);
+        uint256 incentive = IERC20(jGLPAddress).balanceOf(incentiveReceiver);
+
+        assertEq(incentive, (_amount * depositIncentives) / 1e12);
+
+        assertEq(amount, _amount - incentive);
 
         // 1 week later
         vm.warp(block.timestamp + 1 weeks + 1);
@@ -158,13 +172,10 @@ contract MiniChefV2Test is Test {
 
         vm.startPrank(alice, alice);
 
-        farm.withdrawAndHarvest(_poolID, _amount, alice);
+        farm.withdrawAndHarvest(_poolID, amount, alice);
 
         vm.stopPrank();
 
-        uint256 incentive = IERC20(jGLPAddress).balanceOf(incentiveReceiver);
-
-        assertEq(incentive, (_amount * withdrawIncentives) / 1e12);
         assertLt(IERC20(jGLPAddress).balanceOf(alice), _amount);
     }
 
@@ -178,9 +189,9 @@ contract MiniChefV2Test is Test {
 
         vm.stopPrank();
 
-        (,,, uint256 _withdrawIncentives) = farm.poolInfo(_pid);
+        (,,, uint256 _depositIncentives) = farm.poolInfo(_pid);
 
-        assertEq(_withdrawIncentives, _amount);
+        assertEq(_depositIncentives, _amount);
     }
 
     function _deposit(address _user, uint256 _amount, address _asset) private {
