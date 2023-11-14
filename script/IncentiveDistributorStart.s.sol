@@ -35,21 +35,21 @@ contract IncentiveDistributorStart is Script {
 
     address public farmAddress = address(0); // Update
 
-    uint256 glpWithdrawIncentives = ACC_SUSHI_PRECISION.mulDivDown(2, 100); // 2%
-    uint256 usdcWithdrawIncentives = ACC_SUSHI_PRECISION / 100; // 1%
-    uint256 auraWithdrawIncentives; // 0%
+    uint256 glpDepositIncentives = ACC_SUSHI_PRECISION.mulDivDown(2, 100); // 2%
+    uint256 usdcDepositIncentives = ACC_SUSHI_PRECISION / 100; // 1%
+    uint256 auraDepositIncentives; // 0%
 
     function run() public {
         vm.startBroadcast();
 
         // Create pool for jGLP
-        farm.add(glpAllocPoint, jGLP, IRewarder(address(0)), glpWithdrawIncentives);
+        farm.add(glpAllocPoint, jGLP, IRewarder(address(0)), glpDepositIncentives);
 
         // Create pool for jUSDC
-        farm.add(usdcAllocPoint, jUSDC, IRewarder(address(0)), usdcWithdrawIncentives);
+        farm.add(usdcAllocPoint, jUSDC, IRewarder(address(0)), usdcDepositIncentives);
 
         // Create pool for wjAura
-        farm.add(auraAllocPoint, wjAura, IRewarder(address(0)), auraWithdrawIncentives);
+        farm.add(auraAllocPoint, wjAura, IRewarder(address(0)), auraDepositIncentives);
 
         farm.setSushiPerSecond(arbPerSecond);
 
