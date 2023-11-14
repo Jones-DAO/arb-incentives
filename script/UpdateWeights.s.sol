@@ -11,7 +11,7 @@ contract UpdateWeights is Script {
     uint256 usdcAllocPoint = 3939; // 39,39% USDC // Update
     uint256 auraAllocPoint = 2122; // 21.22 % jAURA // Update
 
-    MiniChefV2 public farm = MiniChefV2(0x68F81a47D9a0d453B8fdbeF11509faf3FD7120c7);
+    MiniChefV2 public farm = MiniChefV2(0x0aEfaD19aA454bCc1B1Dd86e18A7d58D0a6FAC38);
 
     function run() public {
         vm.startBroadcast();

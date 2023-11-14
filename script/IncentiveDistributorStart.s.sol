@@ -15,7 +15,7 @@ contract IncentiveDistributorStart is Script {
     IERC20 public constant jUSDC = IERC20(0xe66998533a1992ecE9eA99cDf47686F4fc8458E0);
     IERC20 public constant wjAura = IERC20(0x873066F098E6A3A4FEbF65c9e437F7F71C8ef314);
 
-    MiniChefV2 public farm = MiniChefV2(0x68F81a47D9a0d453B8fdbeF11509faf3FD7120c7);
+    MiniChefV2 public farm = MiniChefV2(0x0aEfaD19aA454bCc1B1Dd86e18A7d58D0a6FAC38);
 
     uint256 constant ACC_SUSHI_PRECISION = 1e12;
 
