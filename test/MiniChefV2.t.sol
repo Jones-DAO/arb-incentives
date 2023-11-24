@@ -23,7 +23,7 @@ contract MiniChefV2Test is Test {
     IERC20 public constant ARB = IERC20(0x912CE59144191C1204E64559FE8253a0e49E6548);
     IERC20 public constant jGLP = IERC20(0x7241bC8035b65865156DDb5EdEf3eB32874a3AF6);
     IERC20 public constant jUSDC = IERC20(0xe66998533a1992ecE9eA99cDf47686F4fc8458E0);
-    IERC20 public constant wjAura = IERC20(0x873066F098E6A3A4FEbF65c9e437F7F71C8ef314);
+    IERC20 public constant wjAura = IERC20(0xcB9295ac65De60373A25C18d2044D517ed5da8A9);
 
     uint256 deadline = 1706745599;
     uint256 totalIncentives = 1_650_000e18;

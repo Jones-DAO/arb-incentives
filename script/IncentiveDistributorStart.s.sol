@@ -13,7 +13,7 @@ contract IncentiveDistributorStart is Script {
 
     IERC20 public constant jGLP = IERC20(0x7241bC8035b65865156DDb5EdEf3eB32874a3AF6);
     IERC20 public constant jUSDC = IERC20(0xe66998533a1992ecE9eA99cDf47686F4fc8458E0);
-    IERC20 public constant wjAura = IERC20(0x873066F098E6A3A4FEbF65c9e437F7F71C8ef314);
+    IERC20 public constant wjAura = IERC20(0xcB9295ac65De60373A25C18d2044D517ed5da8A9);
 
     MiniChefV2 public farm = MiniChefV2(0x0aEfaD19aA454bCc1B1Dd86e18A7d58D0a6FAC38);
 
@@ -29,11 +29,11 @@ contract IncentiveDistributorStart is Script {
     uint256 arbPerSecond = totalIncentives.mulDivDown(1, deadline - block.timestamp);
 
     // The amount of allocation points assigned to the pool. Also known as the amount of ARB to distribute per block.
-    uint256 glpAllocPoint = 3939; // 39,39% GLP
-    uint256 usdcAllocPoint = 3939; // 39,39% USDC
+    uint256 glpAllocPoint = 6302; // 63,02% GLP
+    uint256 usdcAllocPoint = 1576; // 15,76% USDC
     uint256 auraAllocPoint = 2122; // 21.22 % jAURA
 
-    address public farmAddress = address(0); // Update
+    address public farmAddress = 0x0aEfaD19aA454bCc1B1Dd86e18A7d58D0a6FAC38; // Update
 
     uint256 glpDepositIncentives = ACC_SUSHI_PRECISION.mulDivDown(2, 100); // 2%
     uint256 usdcDepositIncentives = ACC_SUSHI_PRECISION / 100; // 1%
