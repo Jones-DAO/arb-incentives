@@ -1,7 +1,7 @@
 pragma solidity ^0.8.20;
 
 import "forge-std/Script.sol";
-import {MiniChefV2} from "src/Sushi/MiniChefV2.sol";
+import {MiniChefV2} from "src/sushi/MiniChefV2.sol";
 import {Governable} from "src/common/Governable.sol";
 
 contract StopRewardsScript is Script {

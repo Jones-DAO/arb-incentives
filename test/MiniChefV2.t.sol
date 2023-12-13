@@ -5,9 +5,9 @@ import {Test, Vm, StdCheats, StdUtils} from "forge-std/Test.sol";
 
 import {FixedPointMathLib} from "solmate/utils/FixedPointMathLib.sol";
 import {console2} from "forge-std/console2.sol";
-import {MiniChefV2} from "src/Sushi/MiniChefV2.sol";
-import {IRewarder} from "src/Sushi/IRewarder.sol";
-import {IERC20} from "src/Sushi/IERC20.sol";
+import {MiniChefV2} from "src/sushi/MiniChefV2.sol";
+import {IRewarder} from "src/sushi/IRewarder.sol";
+import {IERC20} from "src/sushi/IERC20.sol";
 
 contract MiniChefV2Test is Test {
     using FixedPointMathLib for uint256;

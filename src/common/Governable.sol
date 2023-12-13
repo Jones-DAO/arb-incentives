@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-import {AccessControl} from "openzeppelin-contracts/contracts/access/AccessControl.sol";
+import {AccessControl} from "openzeppelin-contracts/access/AccessControl.sol";
 
 abstract contract Governable is AccessControl {
     bytes32 public constant GOVERNOR = bytes32("GOVERNOR");

@@ -2,7 +2,7 @@
 
 pragma solidity 0.8.20;
 
-import {IERC20} from "src/Sushi/IERC20.sol";
+import {IERC20} from "src/sushi/IERC20.sol";
 
 interface IMigratorChef {
     // Take the current LP token address and return the new LP token address.

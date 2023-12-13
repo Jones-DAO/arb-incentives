@@ -2,7 +2,7 @@
 
 pragma solidity 0.8.20;
 
-import {IERC20} from "src/Sushi/IERC20.sol";
+import {IERC20} from "src/sushi/IERC20.sol";
 
 library BoringERC20 {
     function safeSymbol(IERC20 token) internal view returns (string memory) {
