@@ -3,7 +3,7 @@
 pragma solidity 0.8.20;
 pragma experimental ABIEncoderV2;
 
-import {IERC20} from "src/Sushi/IERC20.sol";
+import {IERC20} from "src/sushi/IERC20.sol";
 
 interface IMasterChef {
     struct UserInfo {

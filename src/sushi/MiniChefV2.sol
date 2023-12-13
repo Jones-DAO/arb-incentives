@@ -6,14 +6,14 @@ pragma solidity 0.8.20;
 /// that is deposited into the MasterChef V1 (MCV1) contract.
 /// The allocation point for this pool on MCV1 is the total allocation point for all pools that receive double incentives.
 
-import {IERC20} from "src/Sushi/IERC20.sol";
-import {SignedSafeMath} from "src/Sushi/SignedSafeMath.sol";
-import {BoringMath, BoringMath128} from "src/Sushi/BoringMath.sol";
-import {BoringERC20} from "src/Sushi/BoringERC20.sol";
+import {IERC20} from "src/sushi/IERC20.sol";
+import {SignedSafeMath} from "src/sushi/SignedSafeMath.sol";
+import {BoringMath, BoringMath128} from "src/sushi/BoringMath.sol";
+import {BoringERC20} from "src/sushi/BoringERC20.sol";
 import {Operable, Governable} from "src/common/Operable.sol";
-import {BoringBatchable} from "src/Sushi/BoringBatchable.sol";
-import {IMigratorChef} from "src/Sushi/IMigratorChef.sol";
-import {IRewarder} from "src/Sushi/IRewarder.sol";
+import {BoringBatchable} from "src/sushi/BoringBatchable.sol";
+import {IMigratorChef} from "src/sushi/IMigratorChef.sol";
+import {IRewarder} from "src/sushi/IRewarder.sol";
 
 contract MiniChefV2 is Operable, BoringBatchable {
     using BoringMath for uint256;

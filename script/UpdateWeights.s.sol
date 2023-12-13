@@ -2,8 +2,8 @@
 pragma solidity ^0.8.20;
 
 import "forge-std/Script.sol";
-import {MiniChefV2} from "src/Sushi/MiniChefV2.sol";
-import {IRewarder} from "src/Sushi/IRewarder.sol";
+import {MiniChefV2} from "src/sushi/MiniChefV2.sol";
+import {IRewarder} from "src/sushi/IRewarder.sol";
 
 contract UpdateWeights is Script {
     // The amount of allocation points assigned to the pool. Also known as the amount of ARB to distribute per block.

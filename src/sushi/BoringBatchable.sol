@@ -7,7 +7,7 @@ pragma solidity 0.8.20;
 // solhint-disable avoid-low-level-calls
 // T1 - T4: OK
 
-import {IERC20} from "src/Sushi/IERC20.sol";
+import {IERC20} from "src/sushi/IERC20.sol";
 
 contract BaseBoringBatchable {
     function _getRevertMsg(bytes memory _returnData) internal pure returns (string memory) {
