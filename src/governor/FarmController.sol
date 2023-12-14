@@ -72,6 +72,7 @@ contract FarmController is UpgradeableGovernable {
 
     function setDeadline(uint256 _deadline) public onlyGovernor {
         farm.setDeadline(_deadline);
+        deadline = _deadline;
     }
 
     function setMigrator(IMigratorChef _migrator) public onlyGovernor {
