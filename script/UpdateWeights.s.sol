@@ -32,6 +32,9 @@ contract UpdateWeights is Script {
     function run() public {
         vm.startBroadcast(gov);
 
+        /// @notice set deadline to infinite
+        farm.setDeadline(newDeadline);
+
         // Update pool weight for jGLP
         farm.updatePool(0);
         farm.set(0, glpAllocPoint, IRewarder(address(0)), false);
