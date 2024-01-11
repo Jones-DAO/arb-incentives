@@ -6,9 +6,7 @@ import {Test, Vm, StdCheats, StdUtils} from "forge-std/Test.sol";
 import {FixedPointMathLib} from "solmate/utils/FixedPointMathLib.sol";
 import {console2} from "forge-std/console2.sol";
 import {MiniChefV2} from "src/sushi/MiniChefV2.sol";
-import {Governable} from "src/common/Governable.sol";
 import {UpdateWeights} from "script/UpdateWeights.s.sol";
-import {FarmController} from "src/governor/FarmController.sol";
 import {IERC20} from "src/sushi/IERC20.sol";
 
 contract UpdateRateTest is Test {
