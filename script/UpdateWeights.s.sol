@@ -12,9 +12,6 @@ contract UpdateWeights is Script {
 
     address public gov = 0x5A8546A65baeAeccEad910c8Bd5C088f813C87CC;
 
-    /// @notice GMT+0000: Wednesday, 31 January 2024 23:59:59
-    uint256 oldDeadline = 1706745599;
-
     /// @notice GMT+0000: Friday 29 March 2024 23:59:59
     uint256 newDeadline = 1711756799;
 
@@ -22,12 +19,12 @@ contract UpdateWeights is Script {
     uint256 totalIncentives = 350_000e18;
 
     // Set Arb per second
-    uint256 arbPerSecond = totalIncentives.mulDivDown(1, newDeadline - oldDeadline);
+    uint256 arbPerSecond = totalIncentives.mulDivDown(1, newDeadline - block.timestamp);
 
 
     // The amount of allocation points assigned to the pool. Also known as the amount of ARB to distribute per block.
-    uint256 glpAllocPoint = 5000; // 50% GLP // Update
-    uint256 usdcAllocPoint = 5000; // 50% USDC // Update
+    uint256 glpAllocPoint = 5378; // 50% GLP // Update
+    uint256 usdcAllocPoint = 2500; // 50% USDC // Update
     uint256 auraAllocPoint = 0; // 0 % jAURA // Update
 
     MiniChefV2 public farm = MiniChefV2(0x0aEfaD19aA454bCc1B1Dd86e18A7d58D0a6FAC38);
