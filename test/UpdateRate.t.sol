@@ -7,6 +7,8 @@ import {FixedPointMathLib} from "solmate/utils/FixedPointMathLib.sol";
 import {console2} from "forge-std/console2.sol";
 import {MiniChefV2} from "src/sushi/MiniChefV2.sol";
 import {UpdateWeights} from "script/UpdateWeights.s.sol";
+
+import {FarmController} from "src/governor/FarmController.sol";
 import {IERC20} from "src/sushi/IERC20.sol";
 
 contract UpdateRateTest is Test {
@@ -14,17 +16,20 @@ contract UpdateRateTest is Test {
 
     MiniChefV2 public farm = MiniChefV2(0x0aEfaD19aA454bCc1B1Dd86e18A7d58D0a6FAC38);
 
+    FarmController public controller = FarmController(0x5A8546A65baeAeccEad910c8Bd5C088f813C87CC);
+
     address public jGLPStaker = 0x28d5fA40b3Ca8B6c1D5934fcEc6c58361F749B54;
 
     address public jUSDCStaker = 0x6ff42899f4da584a7eBc166CeECd74715FF5B828;
 
     address public wjAuraStaker = 0x36cc7B13029B5DEe4034745FB4F24034f3F2ffc6;
 
-    address public gov = 0x5A8546A65baeAeccEad910c8Bd5C088f813C87CC;
+    address public multisig = 0xFa82f1bA00b0697227E2Ad6c668abb4C50CA0b1F;
+
+    address jonesDeployer = 0x4817cA4DF701d554D78Aa3d142b62C162C682ee1;
 
     /// @notice token address => pid
     mapping(address => uint256) public poolID;
-
 
     IERC20 public constant ARB = IERC20(0x912CE59144191C1204E64559FE8253a0e49E6548);
     IERC20 public constant jGLP = IERC20(0x7241bC8035b65865156DDb5EdEf3eB32874a3AF6);
@@ -38,6 +43,9 @@ contract UpdateRateTest is Test {
         poolID[address(jUSDC)] = 1;
         poolID[address(wjAura)] = 2;
 
+        vm.startPrank(multisig, multisig);
+        controller.updateGovernor(jonesDeployer);
+        vm.stopPrank();
 
         /// @notice Labels
         vm.label(address(ARB), "$ARB");
@@ -51,21 +59,18 @@ contract UpdateRateTest is Test {
     }
 
     function test_jglp_rate_change() public {
-
         address jGLPAddress = address(jGLP);
 
         uint256 _poolID = poolID[jGLPAddress];
 
-        vm.startPrank(gov, gov);
         farm.updatePool(_poolID);
-        vm.stopPrank();
 
         uint256 pendingArbBefore = farm.pendingSushi(_poolID, jGLPStaker);
 
         UpdateWeights script = new UpdateWeights();
 
         script.run();
-      
+
         uint256 pendingArbAfter = farm.pendingSushi(_poolID, jGLPStaker);
 
         console2.log("pendingArbBefore", pendingArbBefore);
@@ -80,21 +85,18 @@ contract UpdateRateTest is Test {
     }
 
     function test_jusdc_rate_change() public {
-
         address jUSDCAddress = address(jUSDC);
 
         uint256 _poolID = poolID[jUSDCAddress];
 
-        vm.startPrank(gov, gov);
         farm.updatePool(_poolID);
-        vm.stopPrank();
 
         uint256 pendingArbBefore = farm.pendingSushi(_poolID, jUSDCStaker);
 
         UpdateWeights script = new UpdateWeights();
 
         script.run();
-      
+
         uint256 pendingArbAfter = farm.pendingSushi(_poolID, jUSDCStaker);
 
         console2.log("pendingArbBefore", pendingArbBefore);
@@ -108,22 +110,19 @@ contract UpdateRateTest is Test {
         vm.warp(block.timestamp + 1);
     }
 
-     function test_wjaura_rate_change() public {
-
+    function test_wjaura_rate_change() public {
         address wjAuraAddress = address(wjAura);
 
         uint256 _poolID = poolID[wjAuraAddress];
 
-        vm.startPrank(gov, gov);
         farm.updatePool(_poolID);
-        vm.stopPrank();
 
         uint256 pendingArbBefore = farm.pendingSushi(_poolID, wjAuraStaker);
 
         UpdateWeights script = new UpdateWeights();
 
         script.run();
-      
+
         uint256 pendingArbAfter = farm.pendingSushi(_poolID, wjAuraStaker);
 
         console2.log("pendingArbBefore", pendingArbBefore);
