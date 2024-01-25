@@ -13,7 +13,7 @@ import {IERC20} from "src/sushi/IERC20.sol";
 contract UpdateWeights is Script {
     using FixedPointMathLib for uint256;
 
-    address public multisig = 0xFa82f1bA00b0697227E2Ad6c668abb4C50CA0b1F;
+    address public multisig = 0xDD0556DDCFE7CdaB3540E7F09cB366f498d90774;
 
     address public jonesDeployer = 0x4817cA4DF701d554D78Aa3d142b62C162C682ee1;
 
