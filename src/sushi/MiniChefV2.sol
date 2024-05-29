@@ -79,7 +79,7 @@ contract MiniChefV2 is Operable, BoringBatchable {
     constructor(IERC20 _sushi, address _incentiveReceiver) Governable(msg.sender) {
         SUSHI = _sushi;
         deadline = 1706745599;
-        incentivesOn = true;
+        incentivesOn = false;
         incentiveReceiver = _incentiveReceiver;
     }
 
