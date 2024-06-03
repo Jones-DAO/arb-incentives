@@ -13,15 +13,19 @@ contract IncentiveDistributorDeploy is Script {
 
     IERC20 public constant ARB = IERC20(0x912CE59144191C1204E64559FE8253a0e49E6548);
 
+    uint256 public deadline;
+
     MiniChefV2 public farm;
 
     address public incentiveReceiver = 0x5A446ba4D4BF482a3E63648E76E9404E784f7BbC; // jGLP/jUSDC Incentive receiver
 
     function run() public {
+        require(deadline != 0, "deadline not set");
+
         vm.startBroadcast();
         console2.log("Deploying from:", msg.sender);
 
-        farm = new MiniChefV2(ARB, incentiveReceiver);
+        farm = new MiniChefV2(ARB, incentiveReceiver, deadline);
         console2.log("Farm address:", address(farm));
 
         vm.stopBroadcast();

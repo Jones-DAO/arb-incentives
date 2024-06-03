@@ -35,7 +35,7 @@ contract MiniChefV2Test is Test {
 
         vm.startPrank(gov, gov);
 
-        farm = new MiniChefV2(ARB, incentiveReceiver);
+        farm = new MiniChefV2(ARB, incentiveReceiver, deadline);
         uint256 allocPoint; // The amount of allocation points assigned to the pool. Also known as the amount of ARB to distribute per block.
 
         // Labels

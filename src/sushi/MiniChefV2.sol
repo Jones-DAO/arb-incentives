@@ -76,10 +76,10 @@ contract MiniChefV2 is Operable, BoringBatchable {
     event LogSushiPerSecond(uint256 sushiPerSecond);
 
     /// @param _sushi The SUSHI token contract address.
-    constructor(IERC20 _sushi, address _incentiveReceiver) Governable(msg.sender) {
+    constructor(IERC20 _sushi, address _incentiveReceiver, uint256 _deadline) Governable(msg.sender) {
         SUSHI = _sushi;
-        deadline = 1706745599;
-        incentivesOn = false;
+        deadline = _deadline;
+        incentivesOn = true;
         incentiveReceiver = _incentiveReceiver;
     }
 

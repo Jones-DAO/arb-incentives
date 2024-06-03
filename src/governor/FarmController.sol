@@ -24,11 +24,11 @@ contract FarmController is UpgradeableGovernable {
      * @notice Initialize Farm Controller
      * @param _multisig Jones MultiSig
      */
-    function initialize(address _multisig, address _farm) external initializer {
+    function initialize(address _multisig, address _farm, uint256 _deadline) external initializer {
         __Governable_init(_multisig);
 
         farm = MiniChefV2(_farm);
-        deadline = 1706745599;
+        deadline = _deadline;
     }
 
     /* -------------------------------------------------------------------------- */
