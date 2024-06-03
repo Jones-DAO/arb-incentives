@@ -10,8 +10,6 @@ import {FarmController} from "src/governor/FarmController.sol";
 import {Governable} from "src/common/Governable.sol";
 
 contract FarmControllerDeploy is Script {
-    address public proxyAdmin = 0xcC21349b6B1C82530d5Da6ed310380d980F75497;
-
     address public farm;
     
     uint256 public deadline;
