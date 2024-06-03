@@ -354,10 +354,6 @@ contract MiniChefV2 is Operable, BoringBatchable {
                 // Transfer the ERC20 tokens
                 asset.safeTransfer(_to, assetBalance);
             }
-
-            unchecked {
-                ++i;
-            }
         }
 
         uint256 nativeBalance = address(this).balance;
