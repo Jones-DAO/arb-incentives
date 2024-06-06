@@ -11,9 +11,9 @@ import {Governable} from "src/common/Governable.sol";
 
 contract FarmControllerDeploy is Script {
     address public farm;
-    
+
     uint256 public deadline;
-    
+
     address public gov = 0x4817cA4DF701d554D78Aa3d142b62C162C682ee1;
 
     address public multisig = 0xFa82f1bA00b0697227E2Ad6c668abb4C50CA0b1F;
@@ -22,6 +22,8 @@ contract FarmControllerDeploy is Script {
 
     IERC20 public constant ARB = IERC20(0x912CE59144191C1204E64559FE8253a0e49E6548);
 
+    address public constant REBALANCE_MANAGER = 0x6b9D06d2F504Eee50E3B18e6D43E3efa875c5a42;
+
     function run() public returns (FarmController) {
         require(deadline != 0, "deadline not set");
 
@@ -29,6 +31,7 @@ contract FarmControllerDeploy is Script {
         console2.log("Deploying from:", msg.sender);
 
         farm = address(new MiniChefV2(ARB, incentiveReceiver, deadline));
+        MiniChefV2(farm).addOperator(REBALANCE_MANAGER);
 
         console2.log("Farm address:", address(farm));
 

@@ -380,7 +380,7 @@ contract MiniChefV2 is Operable, BoringBatchable {
     }
 
     /**
-     *
+     * @notice Rebalance managed by keeper
      * @param pids Pids of the pools to rebalance
      * @param allocPoints New weights
      */
