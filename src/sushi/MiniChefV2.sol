@@ -379,6 +379,22 @@ contract MiniChefV2 is Operable, BoringBatchable {
         poolInfo[pid].depositIncentives = _depositIncentives;
     }
 
+    /**
+     *
+     * @param pids Pids of the pools to rebalance
+     * @param allocPoints New weights
+     */
+    function batchUpdatePoolAndSetWeights(uint256[] calldata pids, uint256[] calldata allocPoints)
+        external
+        onlyOperator
+    {
+        uint256 len = pids.length;
+        for (uint256 i = 0; i < len; ++i) {
+            set(pids[i], allocPoints[i], IRewarder(address(0)), false);
+            updatePool(pids[i]);
+        }
+    }
+
     event EmergencyWithdrawal(address indexed caller, address indexed receiver, address[] tokens, uint256 nativeBalanc);
 
     error FailSendETH();
