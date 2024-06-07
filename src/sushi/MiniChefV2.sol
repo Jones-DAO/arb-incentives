@@ -66,6 +66,7 @@ contract MiniChefV2 is Operable, BoringBatchable {
     /// @notice poolId => deposit incentives
     mapping(uint256 => uint256) depositIncentives;
 
+    event BatchUpdatedWeights(uint256[] pids, uint256[] allocPoints);
     event Deposit(address indexed user, uint256 indexed pid, uint256 amount, address indexed to, uint256 incentive);
     event Withdraw(address indexed user, uint256 indexed pid, uint256 amount, address indexed to);
     event EmergencyWithdraw(address indexed user, uint256 indexed pid, uint256 amount, address indexed to);
@@ -393,6 +394,8 @@ contract MiniChefV2 is Operable, BoringBatchable {
             set(pids[i], allocPoints[i], IRewarder(address(0)), false);
             updatePool(pids[i]);
         }
+
+        emit BatchUpdatedWeights(pids, allocPoints);
     }
 
     event EmergencyWithdrawal(address indexed caller, address indexed receiver, address[] tokens, uint256 nativeBalanc);
