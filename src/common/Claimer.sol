@@ -5,18 +5,12 @@ import {Governable} from "./Governable.sol";
 import {MerkleProof} from "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-// * Investigated Ramses contract
-// * Passed the erc-20 balances subgrpah to jones org
-// * Made a distributor contract so we can redistribute the ramses rewards and jlp arb stip and whatever else we need
-// * had a call with xeno to explain stuff
-// * talked with n1mr0d to be able to compute the non compounded jlp balances, need to refactor a bit the router to emit events that are erc20 compliant
-
 /**
  * @title Claimer
  * @author JonesDAO
  * @notice
  */
-contract Claimer is Governable {
+abstract contract Claimer is Governable {
     /// @notice Token to be distributed
     address[] public distributedAsset;
 
@@ -24,6 +18,8 @@ contract Claimer is Governable {
     string public farm;
 
     address public keeper;
+
+    bool public paused;
 
     /// @dev Each root data is hashed using cummulative sum accrued for a given user
     ///      we use cumulative sum to avoid storing multiple roots for each user, meaning that the user just needs to claim once
@@ -44,6 +40,8 @@ contract Claimer is Governable {
     }
 
     function claim(address account, uint256[] memory amounts, bytes32[] calldata merkleProof) external {
+        require(!paused, "Claimer: Contract is paused");
+
         uint256 length = distributedAsset.length;
 
         require(
@@ -75,5 +73,17 @@ contract Claimer is Governable {
 
     function updateKeeper(address _newKeeper) external onlyGovernor {
         keeper = _newKeeper;
+    }
+
+    function updatePause(bool _paused) external onlyGovernor {
+        paused = _paused;
+    }
+
+    function saveErc20(address _token, address _to, uint256 _amount) external onlyGovernor {
+        IERC20(_token).transfer(_to, _amount);
+    }
+
+    function saveEth(address _to, uint256 _amount) external onlyGovernor {
+        payable(_to).transfer(_amount);
     }
 }
