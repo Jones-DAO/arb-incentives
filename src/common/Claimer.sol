@@ -33,8 +33,6 @@ abstract contract Claimer is Governable {
 
     event Claimed(address indexed account, bytes32 root, address[] tokens, uint256[] amounts);
 
-    error NothingToClaim();
-
     constructor(address[] memory _distributedAsset, string memory _farm, address _keeper) Governable(msg.sender) {
         distributedAsset = _distributedAsset;
         farm = _farm;
