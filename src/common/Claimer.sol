@@ -8,7 +8,7 @@ import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 /**
  * @title Claimer
  * @author JonesDAO
- * @notice
+ * @notice Claim incentives for a given token using merkle-trees.
  */
 abstract contract Claimer is Governable {
     /// @notice Token to be distributed
