@@ -32,6 +32,7 @@ abstract contract Claimer is Governable {
     mapping(address => mapping(bytes32 => bool)) public claimedRoots;
 
     event Claimed(address indexed account, bytes32 root, address[] tokens, uint256[] amounts);
+    event NewRoot(bytes32 root, uint256 timestamp);
 
     constructor(address[] memory _distributedAsset, string memory _farm, address _keeper) Governable(msg.sender) {
         distributedAsset = _distributedAsset;
@@ -72,6 +73,7 @@ abstract contract Claimer is Governable {
     function pushNewRoot(bytes32 root) external {
         require(msg.sender == keeper, "Claimer: Only keeper can push new root");
         roots.push(root);
+        emit NewRoot(root, block.timestamp);
     }
 
     function updateKeeper(address _newKeeper) external onlyGovernor {
