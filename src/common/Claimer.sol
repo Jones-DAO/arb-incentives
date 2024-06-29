@@ -29,6 +29,8 @@ abstract contract Claimer is Governable {
     /// @notice claimed[account] is the amount of tokens claimed by the account in total
     mapping(address => mapping(address => uint256)) public claimed;
 
+    mapping(address => mapping(bytes32 => bool)) public claimedRoots;
+
     event Claimed(address indexed account, bytes32 root, address[] tokens, uint256[] amounts);
 
     error NothingToClaim();
@@ -39,18 +41,19 @@ abstract contract Claimer is Governable {
         keeper = _keeper;
     }
 
-    function claim(address account, uint256[] memory amounts, bytes32[] calldata merkleProof) external {
+    function claim(uint256[] memory amounts, bytes32[] calldata merkleProof) external {
         require(!paused, "Claimer: Contract is paused");
+        require(!claimedRoots[msg.sender][roots[roots.length - 1]], "Claimer: Already claimed");
 
         uint256 length = distributedAsset.length;
 
         require(
-            MerkleProof.verify(merkleProof, roots[roots.length - 1], keccak256(abi.encodePacked(account, amounts))),
+            MerkleProof.verify(merkleProof, roots[roots.length - 1], keccak256(abi.encodePacked(msg.sender, amounts))),
             "Claimer: Invalid proof"
         );
 
         for (uint256 i = 0; i < length; i++) {
-            uint256 claimed_ = claimed[account][distributedAsset[i]];
+            uint256 claimed_ = claimed[msg.sender][distributedAsset[i]];
 
             if (claimed_ == amounts[i]) {
                 continue;
@@ -58,12 +61,14 @@ abstract contract Claimer is Governable {
 
             uint256 toClaim = amounts[i] - claimed_;
 
-            claimed[account][distributedAsset[i]] = amounts[i];
+            claimed[msg.sender][distributedAsset[i]] = amounts[i];
 
-            IERC20(distributedAsset[i]).transfer(account, toClaim);
+            IERC20(distributedAsset[i]).transfer(msg.sender, toClaim);
         }
 
-        emit Claimed(account, roots[roots.length - 1], distributedAsset, amounts);
+        claimedRoots[msg.sender][roots[roots.length - 1]] = true;
+
+        emit Claimed(msg.sender, roots[roots.length - 1], distributedAsset, amounts);
     }
 
     function pushNewRoot(bytes32 root) external {
