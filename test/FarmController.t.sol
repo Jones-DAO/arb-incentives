@@ -33,7 +33,7 @@ contract FarmControllerTest is Test {
     IERC20 public constant wjAura = IERC20(0xcB9295ac65De60373A25C18d2044D517ed5da8A9);
 
     function setUp() public {
-        vm.createSelectFork(vm.rpcUrl("arbitrum"), 159778901);
+        vm.createSelectFork(vm.rpcUrl("RPC_URL"), 159778901);
 
         FarmControllerDeploy script = new FarmControllerDeploy();
 
