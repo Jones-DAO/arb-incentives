@@ -22,7 +22,7 @@ contract DeployMockClaimer is Script {
         supported_[0] = address(mockErc20);
 
         mockClaimer = new MockClaimer(supported_, keeper);
-        
+
         mockErc20.transfer(keeper, 100_000e18);
 
         console2.log("MockClaimer: ", address(mockClaimer));

@@ -34,7 +34,9 @@ abstract contract Claimer is Governable {
     event Claimed(address indexed account, bytes32 root, address[] tokens, uint256[] amounts);
     event NewRoot(bytes32 root, uint256 timestamp);
 
-    constructor(address[] memory _distributedAsset, string memory _farm, address _keeper) Governable(msg.sender) {
+    constructor(address[] memory _distributedAsset, string memory _farm, address _keeper, address _owner)
+        Governable(_owner)
+    {
         distributedAsset = _distributedAsset;
         farm = _farm;
         keeper = _keeper;
@@ -46,10 +48,9 @@ abstract contract Claimer is Governable {
 
         uint256 length = distributedAsset.length;
 
-        require(
-            MerkleProof.verify(merkleProof, roots[roots.length - 1], keccak256(abi.encodePacked(msg.sender, amounts))),
-            "Claimer: Invalid proof"
-        );
+        bytes32 leaf = keccak256(bytes.concat(keccak256(abi.encode(msg.sender, amounts))));
+
+        require(MerkleProof.verify(merkleProof, roots[roots.length - 1], leaf), "Claimer: Invalid proof");
 
         for (uint256 i = 0; i < length; i++) {
             uint256 claimed_ = claimed[msg.sender][distributedAsset[i]];
