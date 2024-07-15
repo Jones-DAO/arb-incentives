@@ -13,7 +13,7 @@ contract DeployClaimer is Script {
     address arb = 0x912CE59144191C1204E64559FE8253a0e49E6548;
     ArbStip claimer;
 
-    address internal constant DEPLOYER = 0x970AE3e4cAa2DcA8dF567D565dcD3550972B86F2;
+    address internal DEPLOYER;
 
     function run() external {
         vm.startBroadcast(DEPLOYER);
