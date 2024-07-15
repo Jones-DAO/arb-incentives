@@ -3,7 +3,7 @@ pragma solidity ^0.8.20;
 
 import "forge-std/Script.sol";
 import {console2} from "forge-std/console2.sol";
-import {MiniChefV2} from "src/sushi/MiniChefV2.sol";
+import {MiniChefV2, IRewarder} from "src/sushi/MiniChefV2.sol";
 import {IERC20} from "src/sushi/IERC20.sol";
 import {TransparentUpgradeableProxy} from "openzeppelin-contracts/proxy/transparent/TransparentUpgradeableProxy.sol";
 import {FarmController} from "src/governor/FarmController.sol";
@@ -22,7 +22,7 @@ contract FarmControllerDeploy is Script {
 
     IERC20 public constant ARB = IERC20(0x912CE59144191C1204E64559FE8253a0e49E6548);
 
-    address public constant REBALANCE_MANAGER = 0x6b9D06d2F504Eee50E3B18e6D43E3efa875c5a42;
+    address public constant jUSDC = 0xB0BDE111812EAC913b392D80D51966eC977bE3A2;
 
     function run() public returns (FarmController) {
         require(deadline != 0, "deadline not set");
@@ -31,7 +31,6 @@ contract FarmControllerDeploy is Script {
         console2.log("Deploying from:", msg.sender);
 
         farm = address(new MiniChefV2(ARB, incentiveReceiver, deadline));
-        MiniChefV2(farm).addOperator(REBALANCE_MANAGER);
 
         console2.log("Farm address:", address(farm));
 
@@ -42,6 +41,8 @@ contract FarmControllerDeploy is Script {
         controller.initialize(multisig, farm, deadline);
 
         Governable(farm).updateGovernor(address(controller));
+
+        MiniChefV2(farm).add(1e4, IERC20(jUSDC), IRewarder(address(0)), 0);
 
         vm.stopBroadcast();
 
