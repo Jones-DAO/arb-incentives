@@ -11,9 +11,6 @@ import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
  * @notice Claim incentives for a given token using merkle-trees.
  */
 abstract contract Claimer is Governable {
-    /// @notice Token to be distributed
-    address[] public distributedAsset;
-
     /// @notice Farm description
     string public farm;
 
@@ -34,26 +31,25 @@ abstract contract Claimer is Governable {
     event Claimed(address indexed account, bytes32 root, address[] tokens, uint256[] amounts);
     event NewRoot(bytes32 root, uint256 timestamp);
 
-    constructor(address[] memory _distributedAsset, string memory _farm, address _keeper, address _owner)
+    constructor(string memory _farm, address _keeper, address _owner)
         Governable(_owner)
     {
-        distributedAsset = _distributedAsset;
         farm = _farm;
         keeper = _keeper;
     }
 
-    function claim(uint256[] memory amounts, bytes32[] calldata merkleProof) external {
+    function claim(address[] memory tokens, uint256[] memory amounts, bytes32[] calldata merkleProof) external {
         require(!paused, "Claimer: Contract is paused");
         require(!claimedRoots[msg.sender][roots[roots.length - 1]], "Claimer: Already claimed");
 
-        uint256 length = distributedAsset.length;
+        uint256 length = tokens.length;
 
-        bytes32 leaf = keccak256(bytes.concat(keccak256(abi.encode(msg.sender, amounts))));
+        bytes32 leaf = keccak256(bytes.concat(keccak256(abi.encode(msg.sender, tokens, amounts))));
 
         require(MerkleProof.verify(merkleProof, roots[roots.length - 1], leaf), "Claimer: Invalid proof");
 
         for (uint256 i = 0; i < length; i++) {
-            uint256 claimed_ = claimed[msg.sender][distributedAsset[i]];
+            uint256 claimed_ = claimed[msg.sender][tokens[i]];
 
             if (claimed_ == amounts[i]) {
                 continue;
@@ -61,24 +57,20 @@ abstract contract Claimer is Governable {
 
             uint256 toClaim = amounts[i] - claimed_;
 
-            claimed[msg.sender][distributedAsset[i]] = amounts[i];
+            claimed[msg.sender][tokens[i]] = amounts[i];
 
-            IERC20(distributedAsset[i]).transfer(msg.sender, toClaim);
+            IERC20(tokens[i]).transfer(msg.sender, toClaim);
         }
 
         claimedRoots[msg.sender][roots[roots.length - 1]] = true;
 
-        emit Claimed(msg.sender, roots[roots.length - 1], distributedAsset, amounts);
+        emit Claimed(msg.sender, roots[roots.length - 1], tokens, amounts);
     }
 
     function pushNewRoot(bytes32 root) external {
         require(msg.sender == keeper, "Claimer: Only keeper can push new root");
         roots.push(root);
         emit NewRoot(root, block.timestamp);
-    }
-
-    function updateDistributedAssets(address[] memory newDistributedAssets) external onlyGovernor {
-        distributedAsset = newDistributedAssets;
     }
 
     function updateKeeper(address _newKeeper) external onlyGovernor {
