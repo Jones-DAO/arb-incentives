@@ -77,6 +77,10 @@ abstract contract Claimer is Governable {
         emit NewRoot(root, block.timestamp);
     }
 
+    function updateDistributedAssets(address[] memory newDistributedAssets) external onlyGovernor {
+        distributedAsset = newDistributedAssets;
+    }
+
     function updateKeeper(address _newKeeper) external onlyGovernor {
         keeper = _newKeeper;
     }
