@@ -31,9 +31,7 @@ abstract contract Claimer is Governable {
     event Claimed(address indexed account, bytes32 root, address[] tokens, uint256[] amounts);
     event NewRoot(bytes32 root, uint256 timestamp);
 
-    constructor(string memory _farm, address _keeper, address _owner)
-        Governable(_owner)
-    {
+    constructor(string memory _farm, address _keeper, address _owner) Governable(_owner) {
         farm = _farm;
         keeper = _keeper;
     }
