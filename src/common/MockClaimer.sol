@@ -5,7 +5,5 @@ import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import {Claimer} from "src/common/Claimer.sol";
 
 contract MockClaimer is Claimer {
-    constructor(address keeper, address initialOwner)
-        Claimer("MockFarm", keeper, initialOwner)
-    {}
+    constructor(address keeper, address initialOwner) Claimer("MockFarm", keeper, initialOwner) {}
 }
